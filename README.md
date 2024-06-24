@@ -8,7 +8,7 @@ Here you will find a collection of smart contracts that demonstrate common secur
 
 ## What's Inside?
 
--Each smart contract contains unit tests created with Foundry.
+- Each smart contract contains unit tests created with Foundry.
 - Each hack contract contains a article that explains the vulnerability and how it can be exploited.
 
 ## How to Use Them
