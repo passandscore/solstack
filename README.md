@@ -26,5 +26,3 @@ Got questions about these contracts or interested in collaborating? Reach out to
 ---
 
 Thanks for checking out my Smart Contract repository. I hope these contracts help you learn more about smart contract development and security. Happy coding!
-
-```
