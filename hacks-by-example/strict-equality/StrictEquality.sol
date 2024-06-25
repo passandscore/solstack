@@ -4,8 +4,7 @@ pragma solidity ^0.8.25;
 /// @title Strict-Equality - An example of how strict equality can be used to exploit a contract.
 /// @notice This contract shows how strict equality can be used to exploit a contract by causing a denial of service attack, also know and gridlock.
 /// @dev This example is for educational purposes only and should not be used for production code without an appropriate security audit.
-/// @author
-/// Jason Schwarz (https://jasonschwarz.xyz)
+/// @author Jason Schwarz (https://jasonschwarz.xyz)
 
 contract VulnerableContract {
   
