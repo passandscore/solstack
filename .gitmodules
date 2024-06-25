@@ -1,0 +1,3 @@
+[submodule "single-free-mint/lib/forge-std"]
+	path = single-free-mint/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
