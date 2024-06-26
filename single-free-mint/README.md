@@ -1,66 +1,48 @@
-## Foundry
+# **SingleFreeMint Contract**
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+**Free NFT Minting with URI Metadata Generation**
 
-Foundry consists of:
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## **Overview**
 
-## Documentation
+**SingleFreeMint** allows users to mint unique NFTs for free, with dynamic URI metadata generation. It’s built on the ERC721 standard using OpenZeppelin upgradeable contracts.
 
-https://book.getfoundry.sh/
+## **Features**
 
-## Usage
+- **Free Minting:** Users can mint one NFT for free.
+- **Dynamic Metadata:** Generates metadata for each NFT.
+- **ERC721 Compliant:** Uses OpenZeppelin’s `ERC721Upgradeable`.
 
-### Build
 
-```shell
-$ forge build
+### **Requirements**
+
+- Node.js and npm
+- Foundry (`forge`)
+
+### **Installation:**
+
+```bash
+forge install
 ```
 
-### Test
+### **Build Contracts**
 
-```shell
-$ forge test
+```bash
+forge build
 ```
 
-### Format
+### **Run Tests**
 
-```shell
-$ forge fmt
+```bash
+forge test
 ```
 
-### Gas Snapshots
+### **Check Coverage**
 
-```shell
-$ forge snapshot
+```bash
+npm run coverage
 ```
 
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+License
+Licensed under the MIT License. See the LICENSE file for details.
