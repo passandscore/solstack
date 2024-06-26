@@ -7,3 +7,6 @@
 [submodule "single-free-mint/lib/openzeppelin-contracts"]
 	path = single-free-mint/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "hacks-by-example/strict-equality/lib/forge-std"]
+	path = hacks-by-example/strict-equality/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
