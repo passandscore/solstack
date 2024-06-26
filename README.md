@@ -2,6 +2,8 @@
 
 Hey there! Welcome to my Smart Contract repository. This is where I've compiled all the smart contracts that I have created over the years. These contracts are written in Solidity, and contain unit tests created with Foundry. 
 
+> This is a work in progress. I am a full time Solidity developer but have been making contracts for employers and have not had the time to make my own contracts. I am currently working on a few projects that I will be adding to this repository.
+
 ## Hacks-By-Example
 
 Here you will find a collection of smart contracts that demonstrate common security vulnerabilities in smart contracts. These contracts are designed to be educational, and are not intended for deployment on the Ethereum mainnet. You are encouraged to study these contracts to understand how vulnerabilities can be exploited, and how to avoid them in your own smart contract development.
