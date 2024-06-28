@@ -16,14 +16,27 @@
 - **ERC721 Compliant:** Uses OpenZeppelin’s `ERC721Upgradeable`.
 
 
-You will need a local fork of the Ethereum mainnet to run tests.
+## Install Foundry
+- Foundry is a smart contract development toolchain.
 
 ```bash
-export MAINNET_RPC_URL=<your-mainnet-rpc-url>
+  curl -L https://foundry.paradigm.xyz | bash
 ```
 
+---
+### Mainnet Fork
+
+- You will need a local fork of the Ethereum mainnet to run tests.
+  - [Infrua](https://www.infura.io/)
+  - [Alchemy](https://www.alchemy.com/)
+
+
+### Quickstart Commands
 ```bash
+export MAINNET_RPC_URL=https://mainnet.infura.io/v3/<YOUR_API_KEY>
 make
 ```
+
+
 
 
