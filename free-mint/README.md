@@ -6,7 +6,7 @@
 
 ## **Overview**
 
-**SingleFreeMint** allows users to mint unique NFTs for free, with dynamic URI metadata generation. It’s built on the ERC721 standard using OpenZeppelin upgradeable contracts.
+**FreeMint** allows users to mint unique NFTs for free, with dynamic URI metadata generation. It’s built on the ERC721 standard using OpenZeppelin upgradeable contracts.
 
 ## **Features**
 

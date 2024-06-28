@@ -13,6 +13,4 @@ docs/
 # Dotenv file
 .env
 
-# Coverage
-coverage
 
