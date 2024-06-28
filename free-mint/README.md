@@ -1,4 +1,4 @@
-# **SingleFreeMint Contract**
+# **FreeMint Contract**
 
 **Free NFT Minting with URI Metadata Generation**
 
@@ -11,38 +11,19 @@
 ## **Features**
 
 - **Free Minting:** Users can mint one NFT for free.
+- **Pausing:** Contract owner can pause minting.
 - **Dynamic Metadata:** Generates metadata for each NFT.
 - **ERC721 Compliant:** Uses OpenZeppelin’s `ERC721Upgradeable`.
 
 
-### **Requirements**
-
-- Node.js and npm
-- Foundry (`forge`)
-
-### **Installation:**
+You will need a local fork of the Ethereum mainnet to run tests.
 
 ```bash
-forge install
+export MAINNET_RPC_URL=<your-mainnet-rpc-url>
 ```
-
-### **Build Contracts**
 
 ```bash
-forge build
+make
 ```
 
-### **Run Tests**
 
-```bash
-forge test
-```
-
-### **Check Coverage**
-
-```bash
-npm run coverage
-```
-
-License
-Licensed under the MIT License. See the LICENSE file for details.

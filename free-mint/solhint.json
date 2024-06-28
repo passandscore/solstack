@@ -1,0 +1,6 @@
+{
+    "extends": "solhint:recommended",
+    "rules": {
+      "private-vars-leading-underscore": "off"
+    }
+  }
