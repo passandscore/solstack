@@ -1,5 +1,5 @@
 
-all: remove install
+all: remove install build test
 # all:  install build
 
 # Clean the repo
@@ -14,6 +14,6 @@ install :; forge install foundry-rs/forge-std --no-commit && forge install openz
 # Update Dependencies
 # update:; forge update
 
-# build:; forge build
+build:; forge build
 
 test :; forge test --match-path "test/*.t.sol" --fork-url $MAINNET_RPC_URL 
