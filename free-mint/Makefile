@@ -1,5 +1,5 @@
 
-all: remove install build
+all: remove install
 # all:  install build
 
 # Clean the repo
