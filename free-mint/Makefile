@@ -12,8 +12,8 @@ remove :; rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gi
 install :; forge install foundry-rs/forge-std --no-commit && forge install openzeppelin/openzeppelin-contracts@v4.9.2 --no-commit && forge install openzeppelin/openzeppelin-contracts-upgradeable@v4.9.2 --no-commit 
 
 # Update Dependencies
-update:; forge update
+# update:; forge update
 
-build:; forge build
+# build:; forge build
 
 test :; forge test --match-path "test/*.t.sol" --fork-url $MAINNET_RPC_URL 
