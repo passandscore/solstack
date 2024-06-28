@@ -1,6 +1,8 @@
 
 all: remove install build test
 
+.PHONY: all clean remove install build test
+
 # Clean the repo
 clean  :; forge clean
 
@@ -13,4 +15,4 @@ install :; forge install foundry-rs/forge-std --no-commit && forge install openz
 
 build:; forge build
 
-test :; forge test --match-path "test/*.t.sol" --fork-url $MAINNET_RPC_URL 
+test :; forge test --match-path "test/*.t.sol" --fork-url $(MAINNET_RPC_URL)
