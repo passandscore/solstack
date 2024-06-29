@@ -1,14 +1,12 @@
-
 all: remove install build test
 
 .PHONY: all clean remove install build test
 
 clean  :; forge clean
 
-remove :; rm -rf .gitmodules && rm -rf .git/modules/* && rm -rf lib && touch .gitmodules
+remove :; rm -rf dependencies
 
-install :; forge install foundry-rs/forge-std --no-commit && forge install openzeppelin/openzeppelin-contracts@v4.9.2 --no-commit && forge install openzeppelin/openzeppelin-contracts-upgradeable@v4.9.2 --no-commit 
-
+install :; forge soldeer update
 
 build:; forge build
 

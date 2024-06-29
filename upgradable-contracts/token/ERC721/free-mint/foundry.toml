@@ -11,3 +11,7 @@ remappings = [
     "openzeppelin/contracts-upgradeable/contracts/access/=lib/openzeppelin-contracts-upgradeable/contracts/access/",
     "openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
 ]
+[dependencies]
+forge-std = { version = "1.8.2" }
+"@openzeppelin-contracts-upgradeable" = { version = "4.9.6" }
+"@openzeppelin-contracts" = { version = "4.9.6" }

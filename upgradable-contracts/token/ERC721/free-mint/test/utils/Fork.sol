@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity 0.8.25;
 
-import "forge-std/Test.sol";
+import "forge-std-1.8.2/Test.sol";
 
 abstract contract Fork is Test {
     // the identifiers of the forks

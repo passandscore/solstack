@@ -3,7 +3,7 @@ pragma solidity 0.8.25;
 
 import {FreeMint} from "src/FreeMint.sol";
 import {ContractUnderTest} from "./ContractUnderTest.sol";
-import "openzeppelin-contracts/utils/Strings.sol";
+import "@openzeppelin-contracts-4.9.6/utils/Strings.sol";
 
 contract FreeMint_SetMintDuration is ContractUnderTest {
     function setUp() public virtual override {

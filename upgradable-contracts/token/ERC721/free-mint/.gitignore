@@ -13,4 +13,7 @@ docs/
 # Dotenv file
 .env
 
+# Dependencies
+/dependencies
+
 

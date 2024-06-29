@@ -3,8 +3,8 @@ pragma solidity 0.8.25;
 
 import {Fork} from "./utils/Fork.sol";
 import {FreeMint} from "src/FreeMint.sol";
-import "openzeppelin-contracts/utils/Strings.sol";
-import "openzeppelin-contracts/utils/Base64.sol";
+import "@openzeppelin-contracts-4.9.6/utils/Strings.sol";
+import "@openzeppelin-contracts-4.9.6/utils/Base64.sol";
 
 abstract contract ContractUnderTest is Fork {
     FreeMint internal freemintContract;
