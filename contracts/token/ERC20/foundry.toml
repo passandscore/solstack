@@ -1,0 +1,9 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["dependencies"] 
+test = "test"
+
+
+[dependencies]
+forge-std = { version = "1.8.2" }

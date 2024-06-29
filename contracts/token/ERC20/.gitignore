@@ -12,3 +12,12 @@ docs/
 
 # Dotenv file
 .env
+
+# Coverage
+coverage/
+
+# Node modules
+node_modules/
+
+# Dependencies
+/dependencies
