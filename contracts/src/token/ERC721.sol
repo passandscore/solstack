@@ -2,12 +2,12 @@
 
 pragma solidity ^0.8.25;
 
-import {IERC721} from "./interfaces/IERC721.sol";
-import {IERC721Metadata} from "./interfaces/IERC721Metadata.sol";
-import {ERC721Utils} from "./utils/ERC721Utils.sol";
-import {Strings} from "./utils/Strings.sol";
-import {IERC165, ERC165} from "./detection/ERC165.sol";
-import {IERC721Errors} from "./interfaces/IERC6093.sol";
+import {IERC721} from "../interfaces/IERC721.sol";
+import {IERC721Metadata} from "../interfaces/IERC721Metadata.sol";
+import {ERC721Utils} from "../utils/ERC721Utils.sol";
+import {Strings} from "../utils/Strings.sol";
+import {IERC165, ERC165} from "../detection/ERC165.sol";
+import {IERC721Errors} from "../interfaces/IERC6093.sol";
 
 abstract contract ERC721 is ERC165, IERC721, IERC721Metadata, IERC721Errors {
     using Strings for uint256;
@@ -65,14 +65,14 @@ abstract contract ERC721 is ERC165, IERC721, IERC721Metadata, IERC721Errors {
     }
 
     /**
-     * @dev See {IERC721Metadata-name}.
+     * @dev See {IERC721Metadata-name}. done
      */
     function name() public view virtual returns (string memory) {
         return _name;
     }
 
     /**
-     * @dev See {IERC721Metadata-symbol}.
+     * @dev See {IERC721Metadata-symbol}. done 
      */
     function symbol() public view virtual returns (string memory) {
         return _symbol;
@@ -96,8 +96,8 @@ abstract contract ERC721 is ERC165, IERC721, IERC721Metadata, IERC721Errors {
     /**
      * @dev Base URI for computing {tokenURI}. If set, the resulting URI for each
      * token will be the concatenation of the `baseURI` and the `tokenId`. Empty
-     * by default, can be overridden in child contracts.
-     */
+     * by default, can be overridden in child contracts. done
+     */ 
     function _baseURI() internal view virtual returns (string memory) {
         return "";
     }
