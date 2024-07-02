@@ -1,7 +1,7 @@
 {
-  "name": "erc20",
+  "name": "passandscore-smart-contracts",
   "version": "1.0.0",
-  "description": "This is an abstract contract that implements the ERC20 interface. It is meant to be used as a base contract for other ERC20 contracts.",
+  "description": "This repository contains various smart contracts from inspired sources that have been tested using the foundry framework.",
   "scripts": {
     "test": "forge test",
     "coverage": "yarn && forge coverage --report lcov && lcov --remove lcov.info 'test/*.sol'  -o lcov_filtered.info && genhtml lcov_filtered.info --branch-coverage --output-dir coverage --ignore-errors category && rm lcov.info && rm lcov_filtered.info && open coverage/index.html"
