@@ -1,5 +1,5 @@
 {
-  "name": "passandscore-smart-contracts",
+  "name": "passandscore-contracts",
   "version": "1.0.0",
   "description": "This repository contains various smart contracts from inspired sources that have been tested using the foundry framework.",
   "scripts": {

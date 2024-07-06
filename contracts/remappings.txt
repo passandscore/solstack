@@ -1,1 +1,2 @@
-@forge-std-1.8.2=dependencies/forge-std-1.8.2
+@forge-std=dependencies/forge-std-1.8.2/src
+@solmate-6.7.0=dependencies/solmate-6.7.0/src

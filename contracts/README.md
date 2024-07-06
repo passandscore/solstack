@@ -29,8 +29,7 @@ make
 To run specific test suites, use:
 
 ```bash
-forge test --match-path "test/token/ERC20/*.t.sol"
-forge test --match-path "test/token/ERC721/*.t.sol"
+forge test --match-path "test/Soulbound.t.sol"
 ```
 
 ## Coverage

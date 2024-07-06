@@ -7,3 +7,4 @@ test = "test"
 
 [dependencies]
 forge-std = { version = "1.8.2" }
+solmate = { version = "6.7.0" }
