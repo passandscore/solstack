@@ -6,9 +6,9 @@ import {ERC1155} from "@solmate-6.7.0/tokens/ERC1155.sol";
 import {Owned} from "@solmate-6.7.0/auth/Owned.sol";
 
 /**
- * @title Simple ERC1155
+ * @title Basic ERC1155
  * @author passandscore - https://github.com/passandscore
- * @dev Simple ERC1155 with the following features:
+ * @dev Basic ERC1155 with the following features:
  *
  * - A URI for all token types.
  * - Minting and burning of tokens by the owner.
