@@ -2,11 +2,9 @@
 pragma solidity ^0.8.25;
 
 import {FixedERC20} from "../src/FixedERC20.sol";
-
-import {Test} from "@forge-std/Test.sol";
 import {Fork} from "./utils/Fork.sol";
 
-abstract contract Base is Test, Fork {
+abstract contract Base is Fork {
     FixedERC20 contractUnderTest;
 
     address payable deployer = payable(makeAddr("deployer"));

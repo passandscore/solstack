@@ -2,11 +2,9 @@
 pragma solidity ^0.8.25;
 
 import {BasicERC721} from "../src/BasicERC721.sol";
-
-import {Test} from "@forge-std/Test.sol";
 import {Fork} from "./utils/Fork.sol";
 
-abstract contract Base is Test, Fork {
+abstract contract Base is Fork {
     BasicERC721 contractUnderTest;
     string uri = "https://api.BasicERC721.com/";
 

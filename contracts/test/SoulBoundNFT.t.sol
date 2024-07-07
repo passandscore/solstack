@@ -2,11 +2,9 @@
 pragma solidity ^0.8.25;
 
 import {SoulboundNFT} from "../src/SoulboundNFT.sol";
-
-import {Test} from "@forge-std/Test.sol";
 import {Fork} from "./utils/Fork.sol";
 
-abstract contract Base is Test, Fork {
+abstract contract Base is Fork {
     SoulboundNFT contractUnderTest;
     string baseURI = "https://api.soulboundnft.com/";
 

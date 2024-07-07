@@ -9,3 +9,4 @@ test = "test"
 forge-std = { version = "1.8.2" }
 solmate = { version = "6.7.0" }
 "@openzeppelin-contracts" = { version = "5.0.2" }
+"@openzeppelin-contracts-upgradeable" = { version = "5.0.2" }
