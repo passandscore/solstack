@@ -1,3 +1,0 @@
-[submodule "strict-equality/lib/forge-std"]
-    path = strict-equality/lib/forge-std
-    url = https://github.com/example/forge-std.git

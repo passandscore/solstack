@@ -1,7 +1,7 @@
 {
-  "name": "passandscore-contracts",
+  "name": "solstack",
   "version": "1.0.0",
-  "description": "This repository contains various smart contracts from inspired sources that have been tested using the foundry framework.",
+  "description": "A collection of smart contract examples.",
   "scripts": {
     "test": "forge test",
     "coverage": "yarn && forge coverage --report lcov && lcov --remove lcov.info 'test/*.sol'  -o lcov_filtered.info && genhtml lcov_filtered.info --branch-coverage --output-dir coverage --ignore-errors category && rm lcov.info && rm lcov_filtered.info && open coverage/index.html"
@@ -9,12 +9,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/passandscore/smart-contracts.git"
-  },
-  "author": "Jason Schwarz (https://www.jasonschwarz.xyz/)",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/passandscore/smart-contracts/issues"
-  },
-  "homepage": "https://github.com/passandscore/smart-contracts#readme"
-
+  }
 }
