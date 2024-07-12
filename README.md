@@ -15,6 +15,29 @@ Run this command to install dependencies, compile contracts, and execute all tes
 make
 ```
 
+## Setting Up Environment Variables
+
+
+Create a .env file in the project directory.
+
+
+In the .env file, provide the following environment variable by replacing <url> with your  RPC URL. For example:
+
+
+```bash
+<YOUR_ENV_RPC_VARIABLE_NAME>=<url>
+```
+
+
+Running the Test Suite
+Now that you've set up your environment variables, follow these steps to run the test suite:
+In the terminal, run the following commands:
+
+```bash
+ source .env
+ forge test --fork-url $<YOUR_ENV_RPC_VARIABLE_NAME>
+ ```
+
 ## Running a Single Test Suite
 
 To run specific test suites, use:
@@ -54,6 +77,7 @@ The Solidity smart contracts are located in the `src` directory.
 ```ml
 ├─ BasicERC721 — "Simple ERC721 contract"
 ├─ BasicERC1155 — "Simple ERC1155 contract"
+├─ CrowdFunding — "Crowdfunding contract"
 ├─ FixedERC20 — "Fixed supply ERC20 contract"
 ├─ SoulboundNFT — "Single mint, non-transferable NFT contract"
 upgradable/
@@ -81,4 +105,5 @@ This repository is inspired by or directly modified from many sources, primarily
 
 - [Solmate](https://github.com/transmissions11/solmate)
 - [OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)
+- [Solidity-By-Example](https://github.com/solidity-by-example/solidity-by-example.github.io)
 
