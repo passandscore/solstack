@@ -3,7 +3,6 @@ pragma solidity ^0.8.25;
 
 import {BasicERC721} from "./BasicERC721.sol";
 import "./interfaces/IERC4907.sol";
-import {console} from "@forge-std-1.8.2/Console.sol";
 
 contract RentableNFT is BasicERC721, IERC4907 {
     /// @dev Emitted when the caller is not the owner or approved for the NFT
@@ -55,28 +54,28 @@ contract RentableNFT is BasicERC721, IERC4907 {
         maxDaysPerRental = _maxDaysPerRental;
     }
 
-    /*
+    /**
      * @dev Set the user and expires of a NFT for permissioned rentals
-     * @param tokenId The NFT to set the user and expires for
-     * @param user The new renter of the NFT
-     * @param expires Timestamp indicating when the user can use the NFT until
+     * @param _tokenId The NFT to set the user and expires for
+     * @param _user The new renter of the NFT
+     * @param _expires Timestamp indicating when the user can use the NFT until
      *
      * Can only be called by the owner or approved address
      */
-    function setUser(uint256 tokenId, address user, uint64 expires) public {
-        _requireRentalAvailable(tokenId);
-        _requireValidRental(user, expires);
-        _validatePermissions(tokenId);
-        _calculateRentalEstimate(expires);
+    function setUser(uint256 _tokenId, address _user, uint64 _expires) public {
+        _requireRentalAvailable(_tokenId);
+        _requireValidRental(_user, _expires);
+        _validatePermissions(_tokenId);
+        _calculateRentalEstimate(_expires);
 
-        RenterInfo memory rentalInfo = renters[tokenId];
+        RenterInfo memory rentalInfo = renters[_tokenId];
 
-        rentalInfo.user = user;
-        rentalInfo.expires = expires;
+        rentalInfo.user = _user;
+        rentalInfo.expires = _expires;
 
-        renters[tokenId] = rentalInfo;
+        renters[_tokenId] = rentalInfo;
 
-        emit UpdateUser(tokenId, user, expires);
+        emit UpdateUser(_tokenId, _user, _expires);
     }
 
     /**
@@ -89,116 +88,125 @@ contract RentableNFT is BasicERC721, IERC4907 {
      * - The rental expiration timestamp must be valid (i.e., in the future).
      * - The payment provided by the user must meet or exceed the calculated rental price.
      *
-     * @param tokenId The unique identifier of the NFT to be rented.
-     * @param expires The UNIX timestamp indicating the end of the rental period.
+     * @param _tokenId The unique identifier of the NFT to be rented.
+     * @param _expires The UNIX timestamp indicating the end of the rental period.
      *
      * @notice If any of the above conditions are not met, the rental transaction will be reverted.
      */
-    function rent(uint256 tokenId, uint64 expires) public payable {
+    function rent(uint256 _tokenId, uint64 _expires) public payable {
         address user = msg.sender;
 
-        _requireRentalAvailable(tokenId);
-        _requireValidRental(user, expires);
+        _requireRentalAvailable(_tokenId);
+        _requireValidRental(user, _expires);
 
-        if (permissionedRental[tokenId]) {
-            revert PermissionedRental(tokenId);
+        if (permissionedRental[_tokenId]) {
+            revert PermissionedRental(_tokenId);
         }
 
-        (, uint256 totalRentalPrice) = _calculateRentalEstimate(expires);
+        (, uint256 totalRentalPrice) = _calculateRentalEstimate(_expires);
 
         if (msg.value < totalRentalPrice) {
             revert InsufficientFunds();
         }
 
-        RenterInfo memory rentalInfo = renters[tokenId];
+        RenterInfo memory rentalInfo = renters[_tokenId];
         rentalInfo.user = user;
-        rentalInfo.expires = expires;
+        rentalInfo.expires = _expires;
         rentalInfo.price = totalRentalPrice;
 
-        renters[tokenId] = rentalInfo;
+        renters[_tokenId] = rentalInfo;
 
-        emit UpdateUser(tokenId, user, expires);
+        emit UpdateUser(_tokenId, user, _expires);
     }
 
-    /*
+    /**
      * @dev Get the user address of an NFT
-     * @param tokenId The NFT to get the user address for
+     * @param _tokenId The NFT to get the user address for
      * @return The user address for this NFT
      */
-    function userOf(uint256 tokenId) public view virtual returns (address) {
-        if (uint256(renters[tokenId].expires) >= block.timestamp) {
-            return renters[tokenId].user;
+    function userOf(uint256 _tokenId) public view virtual returns (address) {
+        if (uint256(renters[_tokenId].expires) >= block.timestamp) {
+            return renters[_tokenId].user;
         }
 
         return address(0);
     }
 
-    /*
+    /**
      * @dev Get the user expires of an NFT
-     * @param tokenId The NFT to get the user expires for
+     * @param _tokenId The NFT to get the user expires for
      * @return The user expires for this NFT
      */
     function userExpires(
-        uint256 tokenId
+        uint256 _tokenId
     ) public view virtual returns (uint256) {
-        return renters[tokenId].expires;
+        return renters[_tokenId].expires;
     }
 
-    /*
+    /**
      * @dev Get the rental price of an NFT
-     * @param tokenId The NFT to get the rental price for
-     * @return The rental price for this NFT
+     * @param _rentalPricePerDay The rental price to set for this NFT
      */
     function setRentalPricePerDay(uint256 _rentalPricePerDay) public onlyOwner {
         rentalPricePerDay = _rentalPricePerDay;
     }
 
-    /*
+    /**
      * @dev Set the permissioned rental status of an NFT
-     * @param tokenId The NFT to set the permissioned rental status for
-     * @param permissioned The permissioned rental status for this NFT
+     * @param _tokenId The NFT to set the permissioned rental status for
+     * @param _permissioned The permissioned rental status for this NFT
      */
     function setPermissionedRental(
-        uint256 tokenId,
-        bool permissioned
+        uint256 _tokenId,
+        bool _permissioned
     ) public {
-        _validatePermissions(tokenId);
-        permissionedRental[tokenId] = permissioned;
+        _validatePermissions(_tokenId);
+        permissionedRental[_tokenId] = _permissioned;
     }
 
-
-    /*
+    /**
      * @dev Get the permissioned rental status of an NFT
-     * @param tokenId The NFT to get the permissioned rental status for
+     * @param _tokenId The NFT to get the permissioned rental status for
      * @return The permissioned rental status for this NFT
      */
-    function getPermissionedRental(uint256 tokenId) public view returns (bool) {
-        return permissionedRental[tokenId];
+    function getPermissionedRental(
+        uint256 _tokenId
+    ) public view returns (bool) {
+        return permissionedRental[_tokenId];
     }
 
-
-    /*
+    /**
      * @dev Get the rental info of an NFT
-     * @param tokenId The NFT to get the rental info for
-     * @return The rental info for this NFT
+     * @param _tokenId The NFT to get the rental info for
+     * @return The rental price, user address, and expiration timestamp of this NFT
+     *
      */
     function getRentalInfo(
-        uint256 tokenId
-    ) public view returns (uint256 price, address user, uint64 expires) {
-        RenterInfo memory rentalInfo = renters[tokenId];
+        uint256 _tokenId
+    ) public view returns (uint256, address, uint64) {
+        RenterInfo memory rentalInfo = renters[_tokenId];
         return (rentalInfo.price, rentalInfo.user, rentalInfo.expires);
     }
 
+    /**
+     * @dev Get the rental estimate of an NFT
+     * @param _expires The expiration timestamp to calculate the rental estimate for
+     * @return The total days of the rental and total rental price
+     */
     function getRentalEstimate(
-        uint64 expires
+        uint64 _expires
     ) public view returns (uint256, uint256) {
         (
             uint256 totalDaysRented,
             uint256 totalRentalPrice
-        ) = _calculateRentalEstimate(expires);
+        ) = _calculateRentalEstimate(_expires);
 
         return (totalDaysRented, totalRentalPrice);
     }
+
+    // =============================================================
+    //                         Required Overrides
+    // =============================================================
 
     /// @dev See {IERC165-supportsInterface}.
     function supportsInterface(
@@ -211,12 +219,12 @@ contract RentableNFT is BasicERC721, IERC4907 {
             interfaceId == 0x5b5e139f; // ERC165 Interface ID for ERC721Metadata
     }
 
-    /*
+    /**
      * @dev Destroys `tokenId`. See {ERC721-_burn}
      * @param tokenId The token ID to burn
-     * 
+     *
      * This override will additionally clear the user information for the token.
-     * 
+     *
      * Requires that the rental is available
      */
     function _burn(uint256 tokenId) internal virtual override {
@@ -227,34 +235,48 @@ contract RentableNFT is BasicERC721, IERC4907 {
         emit UpdateUser(tokenId, address(0), 0);
     }
 
-    function _requireRentalAvailable(uint256 tokenId) internal view {
-        if (userExpires(tokenId) > block.timestamp) {
+    // =============================================================
+    //                         Internal Functions
+    // =============================================================
+
+
+    /**
+     * @dev Require that the rental is available
+     * @param _tokenId The token ID to validate
+     */
+    function _requireRentalAvailable(uint256 _tokenId) internal view {
+        if (userExpires(_tokenId) > block.timestamp) {
             revert AlreadyRented();
         }
     }
 
-    /*
+    /**
      * @dev Require that the rental is valid
-     * @param user The user address to validate
-     * @param expires The expiration timestamp to validate
+     * @param _user The user address to validate
+     * @param _expires The expiration timestamp to validate
      *
      * Invalid Tokens are handled by the ERC721 contract
      */
-    function _requireValidRental(address user, uint64 expires) internal view {
-        if (user == address(0)) {
+    function _requireValidRental(address _user, uint64 _expires) internal view {
+        if (_user == address(0)) {
             revert InvalidUser();
         }
 
-        if (expires <= block.timestamp) {
+        if (_expires <= block.timestamp) {
             revert InvalidExpiration();
         }
     }
 
-    function _validatePermissions(uint256 tokenId) internal view {
-        address owner = ownerOf(tokenId);
+    /**
+     * @dev Validate the permissions of the caller
+     * @param _tokenId The token ID to validate permissions for
+     */
+    function _validatePermissions(uint256 _tokenId) internal view {
+        address owner = ownerOf(_tokenId);
         address spender = msg.sender;
+
         bool isOwner = spender == owner;
-        bool isApproved = getApproved[tokenId] == spender;
+        bool isApproved = getApproved[_tokenId] == spender;
         bool isApprovedForAll = isApprovedForAll[owner][spender];
 
         if (!isOwner && !isApproved && !isApprovedForAll) {
@@ -262,15 +284,15 @@ contract RentableNFT is BasicERC721, IERC4907 {
         }
     }
 
+    /**
+     * @dev Calculate the rental estimate
+     * @param _expires The expiration timestamp to calculate the rental estimate for
+     * @return The total days of the rental and total rental price
+     */
     function _calculateRentalEstimate(
-        uint64 expires
-    )
-        internal
-        view
-        returns (uint256 totalDaysRented, uint256 totalRentalPrice)
-    {
-        uint256 daysRented = (expires - block.timestamp) / 86400;
-        console.log("Days rented - before: %s", daysRented);
+        uint64 _expires
+    ) internal view returns (uint256, uint256) {
+        uint256 daysRented = (_expires - block.timestamp) / 86400;
 
         if (daysRented > maxDaysPerRental) {
             revert ExceedsMaxRentalDays();
@@ -278,9 +300,6 @@ contract RentableNFT is BasicERC721, IERC4907 {
 
         // Ensure that the rental period is at least 1 day
         daysRented == 0 ? daysRented = 1 : daysRented;
-
-        console.log("Days rented - after: %s", daysRented);
-        console.log("Rental price per day - after: %s", rentalPricePerDay);
 
         return (daysRented, daysRented * rentalPricePerDay);
     }

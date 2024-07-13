@@ -3,7 +3,6 @@ pragma solidity ^0.8.25;
 
 import {RentableNFT} from "../src/RentableNFT.sol";
 import {Fork} from "./utils/Fork.sol";
-import {console} from "@forge-std-1.8.2/Console.sol";
 import {IERC4907} from "../src/interfaces/IERC4907.sol";
 import {ERC721} from "@solmate-6.7.0/tokens/ERC721.sol";
 
