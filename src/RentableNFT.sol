@@ -161,9 +161,21 @@ contract RentableNFT is BasicERC721, IERC4907 {
     function setPermissionedRental(
         uint256 tokenId,
         bool permissioned
-    ) public onlyOwner {
+    ) public {
+        _validatePermissions(tokenId);
         permissionedRental[tokenId] = permissioned;
     }
+
+
+    /*
+     * @dev Get the permissioned rental status of an NFT
+     * @param tokenId The NFT to get the permissioned rental status for
+     * @return The permissioned rental status for this NFT
+     */
+    function getPermissionedRental(uint256 tokenId) public view returns (bool) {
+        return permissionedRental[tokenId];
+    }
+
 
     /*
      * @dev Get the rental info of an NFT

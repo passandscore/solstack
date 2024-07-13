@@ -233,6 +233,7 @@ contract Rent is Base {
         contractUnderTest.rent(tokenId, expires);
     }
 
+
     function test_should_revert_when_renting_for_more_than_max_days() public {
         uint256 tokenId = 1;
         uint64 expires = uint64(
@@ -315,6 +316,37 @@ contract UserOf is Base {
         assertEq(contractUnderTest.userOf(tokenId), renter1);
     }
 }
+
+contract setPermissionedRental is Base {
+    function setUp() public {
+        deploy();
+    
+    }
+
+    function test_should_revert_when_caller_is_not_token_owner() public {
+        uint256 tokenId = 1;
+        bool permissioned = true;
+
+        vm.startPrank(unauthorized);
+        vm.expectRevert(RentableNFT.NotApprovedOrOwner.selector);
+        contractUnderTest.setPermissionedRental(tokenId, permissioned);
+    }
+
+    function test_should_update_permissioned_rental() public {
+        uint256 tokenId = 1;
+
+        assertEq(contractUnderTest.getPermissionedRental(tokenId), false);
+
+        vm.startPrank(deployer);
+        contractUnderTest.setPermissionedRental(tokenId, true);
+
+        assertEq(contractUnderTest.getPermissionedRental(tokenId), true);
+    }
+
+    
+
+}
+      
 
 contract SetRentalPricePerDay is Base {
     function setUp() public {
