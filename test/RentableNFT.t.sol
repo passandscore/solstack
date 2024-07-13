@@ -232,7 +232,6 @@ contract Rent is Base {
         contractUnderTest.rent(tokenId, expires);
     }
 
-
     function test_should_revert_when_renting_for_more_than_max_days() public {
         uint256 tokenId = 1;
         uint64 expires = uint64(
@@ -301,7 +300,10 @@ contract UserOf is Base {
         deploy();
     }
 
-    function test_should_return_zero_address_when_token_is_not_rented() public view{
+    function test_should_return_zero_address_when_token_is_not_rented()
+        public
+        view
+    {
         uint256 tokenId = 1;
         assertEq(contractUnderTest.userOf(tokenId), address(0));
     }
@@ -319,7 +321,6 @@ contract UserOf is Base {
 contract setPermissionedRental is Base {
     function setUp() public {
         deploy();
-    
     }
 
     function test_should_revert_when_caller_is_not_token_owner() public {
@@ -341,11 +342,7 @@ contract setPermissionedRental is Base {
 
         assertEq(contractUnderTest.getPermissionedRental(tokenId), true);
     }
-
-    
-
 }
-      
 
 contract SetRentalPricePerDay is Base {
     function setUp() public {
@@ -365,7 +362,6 @@ contract SetRentalPricePerDay is Base {
         contractUnderTest.setRentalPricePerDay(newRentalPricePerDay);
         assertEq(contractUnderTest.rentalPricePerDay(), newRentalPricePerDay);
     }
-
 }
 
 contract Burn is Base {
@@ -402,7 +398,6 @@ contract Burn is Base {
         assertEq(_user, address(0));
         assertEq(_expires, 0);
     }
-    
 }
 
 contract ViewMethods is Base {
@@ -419,7 +414,10 @@ contract ViewMethods is Base {
         assertEq(contractUnderTest.userExpires(tokenId), expires);
     }
 
-    function test_should_return_zero_when_token_has_not_been_initially_rented() public view{
+    function test_should_return_zero_when_token_has_not_been_initially_rented()
+        public
+        view
+    {
         uint256 tokenId = 1;
         assertEq(contractUnderTest.userExpires(tokenId), 0);
     }
@@ -430,25 +428,40 @@ contract SupportsInterface is Base {
         deploy();
     }
 
-    function test_should_return_true_when_supports_IERC4907_interface() public view {
-        assertTrue(contractUnderTest.supportsInterface(type(IERC4907).interfaceId));
+    function test_should_return_true_when_supports_IERC4907_interface()
+        public
+        view
+    {
+        assertTrue(
+            contractUnderTest.supportsInterface(type(IERC4907).interfaceId)
+        );
     }
 
-    function test_should_return_true_when_supports_ERC165_interface() public view {
+    function test_should_return_true_when_supports_ERC165_interface()
+        public
+        view
+    {
         assertTrue(contractUnderTest.supportsInterface(0x01ffc9a7));
     }
 
-     function test_should_return_true_when_supports_ERC721_interface() public view {
+    function test_should_return_true_when_supports_ERC721_interface()
+        public
+        view
+    {
         assertTrue(contractUnderTest.supportsInterface(0x80ac58cd));
     }
 
-     function test_should_return_true_when_supports_ERC721Metadata_interface() public view {
+    function test_should_return_true_when_supports_ERC721Metadata_interface()
+        public
+        view
+    {
         assertTrue(contractUnderTest.supportsInterface(0x5b5e139f));
     }
 
-    function test_should_return_false_when_does_not_support_unknown_interface() public view {
+    function test_should_return_false_when_does_not_support_unknown_interface()
+        public
+        view
+    {
         assertFalse(contractUnderTest.supportsInterface(0x12345678));
     }
 }
-
-
