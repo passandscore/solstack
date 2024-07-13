@@ -90,7 +90,6 @@ contract BasicERC721 is ERC721, Owned {
         }
 
         totalSupply += amount;
-
     }
 
     /// @dev Withdraws the contract's balance to the owner's address.
@@ -124,6 +123,10 @@ contract BasicERC721 is ERC721, Owned {
         mintPrice = price;
     }
 
+    function burn (uint256 tokenId) external {
+        _burn(tokenId);
+    }
+
     // =============================================================
     //                         Required Overrides
     // =============================================================
@@ -146,7 +149,7 @@ contract BasicERC721 is ERC721, Owned {
      */
     function supportsInterface(
         bytes4 interfaceId
-    ) public view override(ERC721) returns (bool) {
+    ) public view virtual override(ERC721) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
