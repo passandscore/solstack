@@ -5,6 +5,7 @@ import {RentableNFT} from "../src/RentableNFT.sol";
 import {Fork} from "./utils/Fork.sol";
 import {IERC4907} from "../src/interfaces/IERC4907.sol";
 import {ERC721} from "@solmate-6.7.0/tokens/ERC721.sol";
+import {console} from "@forge-std-1.8.2/Console.sol";
 
 abstract contract Base is Fork {
     RentableNFT contractUnderTest;
@@ -276,6 +277,30 @@ contract Rent is Base {
         assertEq(_expires, expires);
     }
 
+    function test_should_update_the_rental_revenue() public {
+        uint256 tokenId = 1;
+        uint64 expires = uint64(block.timestamp + 1000);
+
+        vm.startPrank(deployer);
+        (uint256 totalDaysRented, ) = contractUnderTest.getRentalEstimate(
+            expires
+        );
+
+        uint256 initialRevenue = contractUnderTest.unclaimedRevenueTotal();
+        uint256 expectedRevenue = rentalPricePerDay * totalDaysRented;
+        vm.stopPrank();
+
+        vm.startPrank(renter1);
+        contractUnderTest.rent{value: expectedRevenue}(tokenId, expires);
+        vm.stopPrank();
+
+        vm.startPrank(deployer);
+        assertEq(
+            contractUnderTest.unclaimedRevenueTotal(),
+            initialRevenue + expectedRevenue
+        );
+    }
+
     function test_should_emit_update_user_event() public {
         uint256 tokenId = 1;
         uint64 expires = uint64(block.timestamp + 1000);
@@ -463,5 +488,188 @@ contract SupportsInterface is Base {
         view
     {
         assertFalse(contractUnderTest.supportsInterface(0x12345678));
+    }
+}
+
+contract WithdrawRentalRevenue is Base {
+    function setUp() public {
+        deploy();
+    }
+
+    function test_should_revert_when_no_revenue_to_withdraw() public {
+        vm.expectRevert(RentableNFT.NoRentalRevenue.selector);
+
+        vm.startPrank(deployer);
+        contractUnderTest.withdrawRentalRevenue();
+    }
+
+    function test_should_withdraw_revenue() public {
+        uint256 tokenId = 1;
+        uint64 expires = uint64(block.timestamp + 1 days);
+
+        // Calculate the total rental cost based on the expiration timestamp
+        (uint256 totalDaysRented, ) = contractUnderTest.getRentalEstimate(
+            expires
+        );
+
+        // Rent the NFT as renter1
+        vm.startPrank(renter1);
+        contractUnderTest.rent{value: rentalPricePerDay * totalDaysRented}(
+            tokenId,
+            expires
+        );
+        vm.stopPrank();
+
+        // Check initial balance and unclaimed revenue before withdrawal
+        vm.startPrank(deployer);
+        uint256 initialBalance = address(deployer).balance;
+        uint256 unclaimedRevenue = contractUnderTest.unclaimedRevenueTotal();
+
+        // Ensure the unclaimed revenue matches the expected amount
+        assertEq(unclaimedRevenue, rentalPricePerDay * totalDaysRented);
+
+        // Withdraw the unclaimed revenue
+        contractUnderTest.withdrawRentalRevenue();
+
+        // Check balances after withdrawal
+        uint256 finalBalance = address(deployer).balance;
+        uint256 expectedFinalBalance = initialBalance + unclaimedRevenue;
+
+        // Assert final balance is as expected and unclaimed revenue is reset to 0
+        assertEq(finalBalance, expectedFinalBalance);
+        assertEq(contractUnderTest.unclaimedRevenueTotal(), 0);
+    }
+}
+
+contract WithdrawTokenRevenue is Base {
+    function setUp() public {
+        deploy();
+    }
+
+    function test_should_withdraw_token_revenue() public {
+        uint256 tokenId = 1;
+        uint64 expires = uint64(block.timestamp + 1 days);
+
+        // Calculate the total rental cost based on the expiration timestamp
+        (uint256 totalDaysRented, ) = contractUnderTest.getRentalEstimate(
+            expires
+        );
+
+        // Rent the NFT as renter1
+        vm.startPrank(renter1);
+        contractUnderTest.rent{value: rentalPricePerDay * totalDaysRented}(
+            tokenId,
+            expires
+        );
+        vm.stopPrank();
+
+        // Check initial balances and unclaimed revenue before withdrawal
+        vm.startPrank(deployer);
+        uint256 initialDeployerBalance = address(deployer).balance;
+        uint256 initialContractBalance = address(contractUnderTest).balance;
+        uint256 unclaimedRevenue = contractUnderTest.unclaimedRevenueTotal();
+
+        // Withdraw the token revenue
+        contractUnderTest.withdraw();
+        uint256 amountWithdrawn = initialContractBalance - unclaimedRevenue;
+
+        assertEq(
+            address(deployer).balance,
+            initialDeployerBalance + amountWithdrawn
+        );
+        assertEq(address(contractUnderTest).balance, unclaimedRevenue);
+    }
+
+    function test_should_successfully_withdraw_when_both_balances_are_equal()
+        public
+    {
+        uint256 tokenId = 1;
+        uint64 expires = uint64(block.timestamp + 1 days);
+
+        // Set the rental price per day to the mint price
+        vm.startPrank(deployer);
+        contractUnderTest.setRentalPricePerDay(contractUnderTest.mintPrice());
+        vm.stopPrank();
+
+        // Calculate the total rental cost based on the expiration timestamp
+        (, uint256 totalRentalPrice) = contractUnderTest.getRentalEstimate(
+            expires
+        );
+
+        // Rent the NFT as renter1
+        vm.startPrank(renter1);
+        contractUnderTest.rent{value: totalRentalPrice}(tokenId, expires);
+        vm.stopPrank();
+
+        // Check initial balances and unclaimed revenue before withdrawal
+        vm.startPrank(deployer);
+        uint256 initialDeployerBalance = address(deployer).balance;
+        uint256 initialContractBalance = address(contractUnderTest).balance;
+        uint256 unclaimedRevenue = contractUnderTest.unclaimedRevenueTotal();
+
+        // Withdraw the token revenue
+        contractUnderTest.withdraw();
+        uint256 amountWithdrawn = initialContractBalance - unclaimedRevenue;
+
+        assertEq(
+            address(deployer).balance,
+            initialDeployerBalance + amountWithdrawn
+        );
+        assertEq(address(contractUnderTest).balance, unclaimedRevenue);
+    }
+
+   function test_should_successfully_withdraw_when_rental_revenue_is_greater() public {
+    uint256 tokenId = 1;
+    uint64 expires = uint64(block.timestamp + 1 days);
+
+    vm.startPrank(deployer);
+
+    // Set contract balance to represent a single NFT sold
+    vm.deal(address(contractUnderTest), 1 ether);
+
+    // Set the rental price per day to the mint price
+    contractUnderTest.setRentalPricePerDay(contractUnderTest.mintPrice());
+    vm.stopPrank();
+
+    // Calculate the total rental cost based on the expiration timestamp
+    (, uint256 totalRentalPrice) = contractUnderTest.getRentalEstimate(expires);
+
+    // Rent the NFT as renter1
+    vm.startPrank(renter1);
+    contractUnderTest.rent{value: totalRentalPrice}(tokenId, expires);
+    vm.stopPrank();
+
+    // Get rental expiry date for the NFT
+    (, , uint64 _expires) = contractUnderTest.getRentalInfo(tokenId);
+
+    // Warp time to the expiration date
+    vm.warp(block.timestamp + _expires);
+
+    // Rent the NFT again as renter2
+    vm.startPrank(renter2);
+    uint64 newExpiryTimestamp = uint64(block.timestamp + 1 days);
+    contractUnderTest.rent{value: totalRentalPrice}(tokenId, newExpiryTimestamp);
+    vm.stopPrank();
+
+    // Check initial balances and unclaimed revenue before withdrawal
+    vm.startPrank(deployer);
+    uint256 initialDeployerBalance = address(deployer).balance;
+    uint256 initialContractBalance = address(contractUnderTest).balance;
+    uint256 unclaimedRevenue = contractUnderTest.unclaimedRevenueTotal();
+
+    // Withdraw the token revenue
+    contractUnderTest.withdraw();
+    uint256 amountWithdrawn = initialContractBalance - unclaimedRevenue;
+
+    assertEq(address(deployer).balance, initialDeployerBalance + amountWithdrawn);
+    assertEq(address(contractUnderTest).balance, unclaimedRevenue);
+}
+
+    function test_should_revert_when_no_token_revenue_to_withdraw() public {
+        vm.expectRevert(RentableNFT.NoTokenRevenue.selector);
+
+        vm.startPrank(deployer);
+        vm.deal(address(contractUnderTest), 0 ether);
+        contractUnderTest.withdraw();
     }
 }

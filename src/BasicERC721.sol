@@ -93,7 +93,7 @@ contract BasicERC721 is ERC721, Owned {
     }
 
     /// @dev Withdraws the contract's balance to the owner's address.
-    function withdraw() external onlyOwner {
+    function withdraw() external virtual onlyOwner {
         payable(msg.sender).transfer(address(this).balance);
     }
 
@@ -123,7 +123,7 @@ contract BasicERC721 is ERC721, Owned {
         mintPrice = price;
     }
 
-    function burn (uint256 tokenId) external {
+    function burn(uint256 tokenId) external {
         _burn(tokenId);
     }
 

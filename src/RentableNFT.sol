@@ -3,34 +3,59 @@ pragma solidity ^0.8.25;
 
 import {BasicERC721} from "./BasicERC721.sol";
 import "./interfaces/IERC4907.sol";
+import {console} from "@forge-std-1.8.2/Console.sol";
 
 contract RentableNFT is BasicERC721, IERC4907 {
-    /// @dev Emitted when the caller is not the owner or approved for the NFT
+    // =============================================================
+    //                         Custom Errors
+    // =============================================================
+
+    /// @dev Triggered when the caller is not the owner or approved for the NFT
     error NotApprovedOrOwner();
 
-    /// @dev Emitted when the rental exceeds the max days
+    /// @dev Triggered when the rental exceeds the max days
     error ExceedsMaxRentalDays();
 
-    /// @dev Emitted when the NFT is already rented
+    /// @dev Triggered when the NFT is already rented
     error AlreadyRented();
 
-    /// @dev Emitted when the NFT is not found
+    /// @dev Triggered when the NFT is not found
     error TokenNotFound();
 
-    /// @dev Emitted when the user is invalid
+    /// @dev Triggered when the user is invalid
     error InvalidUser();
 
-    /// @dev Emitted when the expiration is invalid
+    /// @dev Triggered when the expiration is invalid
     error InvalidExpiration();
 
-    /// @dev Emitted when the users value is less than the rental price
+    /// @dev Triggered when the users value is less than the rental price
     error InsufficientFunds();
 
-    /// @dev Emitted when attempting to rent a permissioned rental
+    /// @dev Triggered when attempting to rent a permissioned rental
     error PermissionedRental(uint256 tokenId);
+
+    ///@dev Triggered when there is no token revenue to withdraw
+    error NoTokenRevenue();
+
+    ///@dev Triggered when there is no rental revenue to withdraw
+    error NoRentalRevenue();
+
+    /// @dev Triggered when the transfer of funds fails
+    error TransferFailed();
+    // =============================================================
+    //                         Events
+    // =============================================================
+
+    // @dev Emitted when the token owner withdraws rental revenue
+    event RentalRevenueWithdrawn(address indexed owner, uint256 amount);
+
+    // =============================================================
+    //                         State
+    // =============================================================
 
     uint256 public rentalPricePerDay;
     uint256 public maxDaysPerRental;
+    uint256 public totalRentalRevenue;
 
     struct RenterInfo {
         uint256 price; // cost of the NFT rental
@@ -40,6 +65,11 @@ contract RentableNFT is BasicERC721, IERC4907 {
 
     mapping(uint256 => RenterInfo) internal renters;
     mapping(uint256 => bool) internal permissionedRental;
+    mapping(address => uint256) internal rentalRevenue;
+
+    // =============================================================
+    //                         Constructor
+    // =============================================================
 
     constructor(
         string memory _name,
@@ -94,6 +124,7 @@ contract RentableNFT is BasicERC721, IERC4907 {
      * @notice If any of the above conditions are not met, the rental transaction will be reverted.
      */
     function rent(uint256 _tokenId, uint64 _expires) public payable {
+        address owner = ownerOf(_tokenId);
         address user = msg.sender;
 
         _requireRentalAvailable(_tokenId);
@@ -108,6 +139,9 @@ contract RentableNFT is BasicERC721, IERC4907 {
         if (msg.value < totalRentalPrice) {
             revert InsufficientFunds();
         }
+
+        rentalRevenue[owner] += msg.value;
+        totalRentalRevenue += msg.value;
 
         RenterInfo memory rentalInfo = renters[_tokenId];
         rentalInfo.user = user;
@@ -141,6 +175,27 @@ contract RentableNFT is BasicERC721, IERC4907 {
         uint256 _tokenId
     ) public view virtual returns (uint256) {
         return renters[_tokenId].expires;
+    }
+
+
+    /**
+     * @dev Withdraw rental revenue for the caller
+     * The caller must have rental revenue to withdraw
+     */
+    function withdrawRentalRevenue() public {
+        address owner = msg.sender;
+        uint256 balance = rentalRevenue[owner];
+
+        if (balance == 0) {
+            revert NoRentalRevenue();
+        }
+
+        rentalRevenue[owner] = 0;
+        totalRentalRevenue -= balance;
+
+        payable(owner).transfer(balance);
+
+        emit RentalRevenueWithdrawn(owner, balance);
     }
 
     /**
@@ -204,6 +259,14 @@ contract RentableNFT is BasicERC721, IERC4907 {
         return (totalDaysRented, totalRentalPrice);
     }
 
+    /**
+     * @dev Get the total unclaimed rental revenue of all rented NFTs by the caller
+     * @return The total unclaimed rental revenue of the caller
+     */
+    function unclaimedRevenueTotal() public view returns (uint256) {
+        return rentalRevenue[msg.sender];
+    }
+
     // =============================================================
     //                         Required Overrides
     // =============================================================
@@ -235,10 +298,32 @@ contract RentableNFT is BasicERC721, IERC4907 {
         emit UpdateUser(tokenId, address(0), 0);
     }
 
+
+    /**
+     * @dev Withdraw the contract balance to the owner
+     * Requires that the balance to withdraw is greater than 0
+     */
+    function withdraw() external override(BasicERC721) onlyOwner {
+        uint256 balanceToWithdraw;
+        uint256 contractBalance = address(this).balance;
+
+        if (totalRentalRevenue >= contractBalance) {
+            balanceToWithdraw = totalRentalRevenue - contractBalance;
+        } else {
+            balanceToWithdraw = contractBalance - totalRentalRevenue;
+        }
+
+        if (balanceToWithdraw > 0) {
+            payable(msg.sender).transfer(balanceToWithdraw);
+            emit Transfer(address(this), msg.sender, balanceToWithdraw);
+        } else {
+            revert NoTokenRevenue();
+        }
+    }
+
     // =============================================================
     //                         Internal Functions
     // =============================================================
-
 
     /**
      * @dev Require that the rental is available
