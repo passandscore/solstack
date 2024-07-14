@@ -1,4 +1,4 @@
-# RentableNFT Contract
+# RentableNFT
 
 RentableNFT is a Solidity smart contract that extends `BasicERC721` and implements the `IERC4907` interface, enabling NFTs to be rented. This contract includes custom errors, events, state variables, and various functions to manage rentals, permissions, and revenues.
 
