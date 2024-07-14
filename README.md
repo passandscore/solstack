@@ -1,8 +1,7 @@
 
-<img src="logo.png" alt="logo" height="118"/>
-
-
-An ever-growing stack of handcrafted Solidity examples. 
+<p align="center">
+  <img src="assets/solstack-cover.png" alt="Solstack Cover"/>
+</p>
 
 ---
 
@@ -79,6 +78,7 @@ The Solidity smart contracts are located in the `src` directory.
 ├─ BasicERC1155 — "Simple ERC1155 contract"
 ├─ CrowdFunding — "Crowdfunding contract"
 ├─ FixedERC20 — "Fixed supply ERC20 contract"
+├─ RentableNFT — "Rent out NFTs for a specified period"
 ├─ SoulboundNFT — "Single mint, non-transferable NFT contract"
 upgradable/
 ├─ FreeMintERC721 — "Single free mint per address ERC721 contract"
