@@ -85,6 +85,9 @@ upgradable/
 
 ```
 
+## Documentation
+Explore my Solstack GitBook [Documentation](https://passandscore.gitbook.io/solstack) for detailed information on each contract and its functionalities.
+
 ## Directories
 
 ```ml
