@@ -14,8 +14,6 @@ abstract contract Base is Fork {
     string uri = "https://api.com/nft/";
     uint256 price = 1 ether;
     uint256 maxSupply = 100;
-    uint256 rentalPricePerDay = .1 ether;
-    uint256 maxDaysPerRental = 10;
 
     address payable deployer = payable(makeAddr("deployer"));
     address payable renter1 = payable(makeAddr("renter1"));
@@ -39,9 +37,7 @@ abstract contract Base is Fork {
             symbol,
             uri,
             price,
-            maxSupply,
-            rentalPricePerDay,
-            maxDaysPerRental
+            maxSupply
         );
 
         // label the contracts
@@ -55,6 +51,12 @@ abstract contract Base is Fork {
 
         // mint the max supply to the deployer
         contractUnderTest.mint{value: price * maxSupply}(maxSupply);
+
+        // set rental specs for all owned NFTs
+        contractUnderTest.setRentalSpecs(
+            .1 ether, // rentalPricePerDay
+            10 // maxDaysPerRental
+        );
 
         vm.stopPrank();
     }
@@ -83,14 +85,6 @@ contract Deployment is Base {
 
     function test_should_set_max_supply() public view {
         assertEq(contractUnderTest.MAX_SUPPLY(), maxSupply);
-    }
-
-    function test_should_set_rental_price_per_day() public view {
-        assertEq(contractUnderTest.rentalPricePerDay(), rentalPricePerDay);
-    }
-
-    function test_should_set_max_days_per_rental() public view {
-        assertEq(contractUnderTest.maxDaysPerRental(), maxDaysPerRental);
     }
 }
 
@@ -139,6 +133,11 @@ contract SetUser is Base {
 
     function test_should_revert_when_renting_for_more_than_max_days() public {
         uint256 tokenId = 1;
+
+        (, uint256 maxDaysPerRental) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
+
         uint64 expires = uint64(
             block.timestamp + (maxDaysPerRental * 1 days) + 1 days
         );
@@ -227,7 +226,7 @@ contract Rent is Base {
 
         bytes4 selector = RentableNFT.PermissionedRental.selector;
 
-        vm.expectRevert(abi.encodeWithSelector(selector, tokenId));
+        vm.expectRevert(abi.encodeWithSelector(selector));
 
         vm.startPrank(renter1);
         contractUnderTest.rent(tokenId, expires);
@@ -235,6 +234,11 @@ contract Rent is Base {
 
     function test_should_revert_when_renting_for_more_than_max_days() public {
         uint256 tokenId = 1;
+
+        (, uint256 maxDaysPerRental) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
+
         uint64 expires = uint64(
             block.timestamp + (maxDaysPerRental * 1 days) + 1 days
         );
@@ -259,7 +263,12 @@ contract Rent is Base {
         uint256 tokenId = 1;
         uint64 expires = uint64(block.timestamp + 1000);
 
+        (uint256 rentalPricePerDay, ) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
+
         (uint256 totalDaysRented, ) = contractUnderTest.getRentalEstimate(
+            deployer,
             expires
         );
 
@@ -281,14 +290,26 @@ contract Rent is Base {
         uint256 tokenId = 1;
         uint64 expires = uint64(block.timestamp + 1000);
 
+        (uint256 rentalPricePerDay, ) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
+
+        console.log("rentalPricePerDay: ", rentalPricePerDay);
+
         vm.startPrank(deployer);
         (uint256 totalDaysRented, ) = contractUnderTest.getRentalEstimate(
+            deployer,
             expires
         );
+
+        console.log("totalDaysRented: ", totalDaysRented);
 
         uint256 initialRevenue = contractUnderTest.unclaimedRevenueTotal();
         uint256 expectedRevenue = rentalPricePerDay * totalDaysRented;
         vm.stopPrank();
+
+        console.log("expectedRevenue: ", expectedRevenue);
+        console.log("renter balance: ", address(renter1).balance);
 
         vm.startPrank(renter1);
         contractUnderTest.rent{value: expectedRevenue}(tokenId, expires);
@@ -305,7 +326,12 @@ contract Rent is Base {
         uint256 tokenId = 1;
         uint64 expires = uint64(block.timestamp + 1000);
 
+        (uint256 rentalPricePerDay, ) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
+
         (uint256 totalDaysRented, ) = contractUnderTest.getRentalEstimate(
+            deployer,
             expires
         );
 
@@ -369,23 +395,28 @@ contract setPermissionedRental is Base {
     }
 }
 
-contract SetRentalPricePerDay is Base {
+contract SetRentalSpecs is Base {
     function setUp() public {
         deploy();
     }
 
-    function test_should_revert_when_caller_is_not_owner() public {
-        vm.startPrank(unauthorized);
-        vm.expectRevert("UNAUTHORIZED");
-        contractUnderTest.setRentalPricePerDay(1 ether);
-    }
-
     function test_should_update_rental_price_per_day() public {
         uint256 newRentalPricePerDay = 2 ether;
+        uint256 newMaxDaysPerRental = 20;
 
         vm.startPrank(deployer);
-        contractUnderTest.setRentalPricePerDay(newRentalPricePerDay);
-        assertEq(contractUnderTest.rentalPricePerDay(), newRentalPricePerDay);
+        contractUnderTest.setRentalSpecs(
+            newRentalPricePerDay,
+            newMaxDaysPerRental
+        );
+
+        (
+            uint256 rentalPricePerDay,
+            uint256 maxDaysPerRental
+        ) = contractUnderTest.getRentalSpecs(deployer);
+
+        assertEq(rentalPricePerDay, newRentalPricePerDay);
+        assertEq(maxDaysPerRental, newMaxDaysPerRental);
     }
 }
 
@@ -507,8 +538,13 @@ contract WithdrawRentalRevenue is Base {
         uint256 tokenId = 1;
         uint64 expires = uint64(block.timestamp + 1 days);
 
+        (uint256 rentalPricePerDay, ) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
+
         // Calculate the total rental cost based on the expiration timestamp
         (uint256 totalDaysRented, ) = contractUnderTest.getRentalEstimate(
+            deployer,
             expires
         );
 
@@ -550,8 +586,13 @@ contract WithdrawTokenRevenue is Base {
         uint256 tokenId = 1;
         uint64 expires = uint64(block.timestamp + 1 days);
 
+        (uint256 rentalPricePerDay, ) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
+
         // Calculate the total rental cost based on the expiration timestamp
         (uint256 totalDaysRented, ) = contractUnderTest.getRentalEstimate(
+            deployer,
             expires
         );
 
@@ -586,13 +627,21 @@ contract WithdrawTokenRevenue is Base {
         uint256 tokenId = 1;
         uint64 expires = uint64(block.timestamp + 1 days);
 
+        (, uint256 maxDaysPerRental) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
+
         // Set the rental price per day to the mint price
         vm.startPrank(deployer);
-        contractUnderTest.setRentalPricePerDay(contractUnderTest.mintPrice());
+        contractUnderTest.setRentalSpecs(
+            contractUnderTest.mintPrice(),
+            maxDaysPerRental
+        );
         vm.stopPrank();
 
         // Calculate the total rental cost based on the expiration timestamp
         (, uint256 totalRentalPrice) = contractUnderTest.getRentalEstimate(
+            deployer,
             expires
         );
 
@@ -618,52 +667,71 @@ contract WithdrawTokenRevenue is Base {
         assertEq(address(contractUnderTest).balance, unclaimedRevenue);
     }
 
-   function test_should_successfully_withdraw_when_rental_revenue_is_greater() public {
-    uint256 tokenId = 1;
-    uint64 expires = uint64(block.timestamp + 1 days);
+    function test_should_successfully_withdraw_when_rental_revenue_is_greater()
+        public
+    {
+        uint256 tokenId = 1;
+        uint64 expires = uint64(block.timestamp + 1 days);
 
-    vm.startPrank(deployer);
+        vm.startPrank(deployer);
 
-    // Set contract balance to represent a single NFT sold
-    vm.deal(address(contractUnderTest), 1 ether);
+        // Get the rental specs for the deployer
+        (, uint256 maxDaysPerRental) = contractUnderTest.getRentalSpecs(
+            deployer
+        );
 
-    // Set the rental price per day to the mint price
-    contractUnderTest.setRentalPricePerDay(contractUnderTest.mintPrice());
-    vm.stopPrank();
+        // Set contract balance to represent a single NFT sold
+        vm.deal(address(contractUnderTest), 1 ether);
 
-    // Calculate the total rental cost based on the expiration timestamp
-    (, uint256 totalRentalPrice) = contractUnderTest.getRentalEstimate(expires);
+        // Set the rental price per day to the mint price
+        contractUnderTest.setRentalSpecs(
+            contractUnderTest.mintPrice(),
+            maxDaysPerRental
+        );
+        vm.stopPrank();
 
-    // Rent the NFT as renter1
-    vm.startPrank(renter1);
-    contractUnderTest.rent{value: totalRentalPrice}(tokenId, expires);
-    vm.stopPrank();
+        // Calculate the total rental cost based on the expiration timestamp
+        (, uint256 totalRentalPrice) = contractUnderTest.getRentalEstimate(
+            deployer,
+            expires
+        );
 
-    // Get rental expiry date for the NFT
-    (, , uint64 _expires) = contractUnderTest.getRentalInfo(tokenId);
+        // Rent the NFT as renter1
+        vm.startPrank(renter1);
+        contractUnderTest.rent{value: totalRentalPrice}(tokenId, expires);
+        vm.stopPrank();
 
-    // Warp time to the expiration date
-    vm.warp(block.timestamp + _expires);
+        // Get rental expiry date for the NFT
+        (, , uint64 _expires) = contractUnderTest.getRentalInfo(tokenId);
 
-    // Rent the NFT again as renter2
-    vm.startPrank(renter2);
-    uint64 newExpiryTimestamp = uint64(block.timestamp + 1 days);
-    contractUnderTest.rent{value: totalRentalPrice}(tokenId, newExpiryTimestamp);
-    vm.stopPrank();
+        // Warp time to the expiration date
+        vm.warp(block.timestamp + _expires);
 
-    // Check initial balances and unclaimed revenue before withdrawal
-    vm.startPrank(deployer);
-    uint256 initialDeployerBalance = address(deployer).balance;
-    uint256 initialContractBalance = address(contractUnderTest).balance;
-    uint256 unclaimedRevenue = contractUnderTest.unclaimedRevenueTotal();
+        // Rent the NFT again as renter2
+        vm.startPrank(renter2);
+        uint64 newExpiryTimestamp = uint64(block.timestamp + 1 days);
+        contractUnderTest.rent{value: totalRentalPrice}(
+            tokenId,
+            newExpiryTimestamp
+        );
+        vm.stopPrank();
 
-    // Withdraw the token revenue
-    contractUnderTest.withdraw();
-    uint256 amountWithdrawn = initialContractBalance - unclaimedRevenue;
+        // Check initial balances and unclaimed revenue before withdrawal
+        vm.startPrank(deployer);
+        uint256 initialDeployerBalance = address(deployer).balance;
+        uint256 initialContractBalance = address(contractUnderTest).balance;
+        uint256 unclaimedRevenue = contractUnderTest.unclaimedRevenueTotal();
 
-    assertEq(address(deployer).balance, initialDeployerBalance + amountWithdrawn);
-    assertEq(address(contractUnderTest).balance, unclaimedRevenue);
-}
+        // Withdraw the token revenue
+        contractUnderTest.withdraw();
+        uint256 amountWithdrawn = initialContractBalance - unclaimedRevenue;
+
+        assertEq(
+            address(deployer).balance,
+            initialDeployerBalance + amountWithdrawn
+        );
+        assertEq(address(contractUnderTest).balance, unclaimedRevenue);
+    }
 
     function test_should_revert_when_no_token_revenue_to_withdraw() public {
         vm.expectRevert(RentableNFT.NoTokenRevenue.selector);

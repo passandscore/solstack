@@ -32,7 +32,7 @@ contract RentableNFT is BasicERC721, IERC4907 {
     error InsufficientFunds();
 
     /// @dev Triggered when attempting to rent a permissioned rental
-    error PermissionedRental(uint256 tokenId);
+    error PermissionedRental();
 
     ///@dev Triggered when there is no token revenue to withdraw
     error NoTokenRevenue();
@@ -53,8 +53,6 @@ contract RentableNFT is BasicERC721, IERC4907 {
     //                         State
     // =============================================================
 
-    uint256 public rentalPricePerDay;
-    uint256 public maxDaysPerRental;
     uint256 public totalRentalRevenue;
 
     struct RenterInfo {
@@ -63,9 +61,15 @@ contract RentableNFT is BasicERC721, IERC4907 {
         uint64 expires; // timestamp of when the NFT rental expires
     }
 
-    mapping(uint256 => RenterInfo) internal renters;
-    mapping(uint256 => bool) internal permissionedRental;
-    mapping(address => uint256) internal rentalRevenue;
+    struct RentalSpecs {
+        uint256 rentalPricePerDay;
+        uint256 maxDaysPerRental;
+    }
+
+    mapping(uint256 => RenterInfo) private renters;
+    mapping(uint256 => bool) private permissionedRental;
+    mapping(address => uint256) private rentalRevenue;
+    mapping(address => RentalSpecs) private rentalSpecs;
 
     // =============================================================
     //                         Constructor
@@ -76,13 +80,8 @@ contract RentableNFT is BasicERC721, IERC4907 {
         string memory _symbol,
         string memory _uri,
         uint256 _price,
-        uint256 _maxSupply,
-        uint256 _rentalPricePerDay,
-        uint256 _maxDaysPerRental
-    ) BasicERC721(_name, _symbol, _uri, _price, _maxSupply) {
-        rentalPricePerDay = _rentalPricePerDay;
-        maxDaysPerRental = _maxDaysPerRental;
-    }
+        uint256 _maxSupply
+    ) BasicERC721(_name, _symbol, _uri, _price, _maxSupply) {}
 
     /**
      * @dev Set the user and expires of a NFT for permissioned rentals
@@ -93,10 +92,12 @@ contract RentableNFT is BasicERC721, IERC4907 {
      * Can only be called by the owner or approved address
      */
     function setUser(uint256 _tokenId, address _user, uint64 _expires) public {
+        address owner = ownerOf(_tokenId);
+
         _requireRentalAvailable(_tokenId);
         _requireValidRental(_user, _expires);
         _validatePermissions(_tokenId);
-        _calculateRentalEstimate(_expires);
+        _calculateRentalEstimate(owner, _expires);
 
         RenterInfo memory rentalInfo = renters[_tokenId];
 
@@ -131,10 +132,13 @@ contract RentableNFT is BasicERC721, IERC4907 {
         _requireValidRental(user, _expires);
 
         if (permissionedRental[_tokenId]) {
-            revert PermissionedRental(_tokenId);
+            revert PermissionedRental();
         }
 
-        (, uint256 totalRentalPrice) = _calculateRentalEstimate(_expires);
+        (, uint256 totalRentalPrice) = _calculateRentalEstimate(
+            owner,
+            _expires
+        );
 
         if (msg.value < totalRentalPrice) {
             revert InsufficientFunds();
@@ -177,7 +181,6 @@ contract RentableNFT is BasicERC721, IERC4907 {
         return renters[_tokenId].expires;
     }
 
-
     /**
      * @dev Withdraw rental revenue for the caller
      * The caller must have rental revenue to withdraw
@@ -199,11 +202,16 @@ contract RentableNFT is BasicERC721, IERC4907 {
     }
 
     /**
-     * @dev Get the rental price of an NFT
+     * @dev Set the rental specs for all NFTs owned by the caller
      * @param _rentalPricePerDay The rental price to set for this NFT
+     * @param _maxDaysPerRental The max days per rental to set for this NFT
      */
-    function setRentalPricePerDay(uint256 _rentalPricePerDay) public onlyOwner {
-        rentalPricePerDay = _rentalPricePerDay;
+    function setRentalSpecs(
+        uint256 _rentalPricePerDay,
+        uint256 _maxDaysPerRental
+    ) public {
+        rentalSpecs[msg.sender].rentalPricePerDay = _rentalPricePerDay;
+        rentalSpecs[msg.sender].maxDaysPerRental = _maxDaysPerRental;
     }
 
     /**
@@ -245,18 +253,34 @@ contract RentableNFT is BasicERC721, IERC4907 {
 
     /**
      * @dev Get the rental estimate of an NFT
+     * @param _owner The owner of the NFT
      * @param _expires The expiration timestamp to calculate the rental estimate for
      * @return The total days of the rental and total rental price
      */
     function getRentalEstimate(
+        address _owner,
         uint64 _expires
     ) public view returns (uint256, uint256) {
         (
             uint256 totalDaysRented,
             uint256 totalRentalPrice
-        ) = _calculateRentalEstimate(_expires);
+        ) = _calculateRentalEstimate(_owner, _expires);
 
         return (totalDaysRented, totalRentalPrice);
+    }
+
+    /**
+     * @dev Get the rental specs of an NFT owner
+     * @param _owner The owner of the NFT
+     * @return The rental price per day and max days per rental of this NFT owner
+     */
+    function getRentalSpecs(
+        address _owner
+    ) public view returns (uint256, uint256) {
+        return (
+            rentalSpecs[_owner].rentalPricePerDay,
+            rentalSpecs[_owner].maxDaysPerRental
+        );
     }
 
     /**
@@ -297,7 +321,6 @@ contract RentableNFT is BasicERC721, IERC4907 {
         delete renters[tokenId];
         emit UpdateUser(tokenId, address(0), 0);
     }
-
 
     /**
      * @dev Withdraw the contract balance to the owner
@@ -375,17 +398,20 @@ contract RentableNFT is BasicERC721, IERC4907 {
      * @return The total days of the rental and total rental price
      */
     function _calculateRentalEstimate(
+        address _owner,
         uint64 _expires
     ) internal view returns (uint256, uint256) {
+        RentalSpecs memory specs = rentalSpecs[_owner];
+
         uint256 daysRented = (_expires - block.timestamp) / 86400;
 
-        if (daysRented > maxDaysPerRental) {
+        if (daysRented > specs.maxDaysPerRental) {
             revert ExceedsMaxRentalDays();
         }
 
         // Ensure that the rental period is at least 1 day
         daysRented == 0 ? daysRented = 1 : daysRented;
 
-        return (daysRented, daysRented * rentalPricePerDay);
+        return (daysRented, daysRented * specs.rentalPricePerDay);
     }
 }
