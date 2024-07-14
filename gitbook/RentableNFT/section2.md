@@ -1,4 +1,4 @@
-# Rentable NFTs 
+# Use Cases for Rentable NFTs
 
 Rentable NFTs (Non-Fungible Tokens) introduce an innovative way to utilize digital assets by allowing owners to lend out their NFTs for a specified period in exchange for compensation. Here are some use cases for rentable NFTs:
 

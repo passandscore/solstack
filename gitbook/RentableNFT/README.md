@@ -1,3 +1,7 @@
-# Introduction
+# RentableNFT Contract
 
-Welcome to the documentation for my handcrafted Solidity contracts! This GitBook is designed to provide comprehensive and clear information about each contract I have developed. Whether you are a developer, auditor, or enthusiast, this documentation aims to help you understand the functionality, design principles, and implementation details of the contracts.
+RentableNFT is a Solidity smart contract that extends `BasicERC721` and implements the `IERC4907` interface, enabling NFTs to be rented. This contract includes custom errors, events, state variables, and various functions to manage rentals, permissions, and revenues.
+
+## Purpose
+
+RentableNFT allows NFT owners to rent out their tokens to users for a specified period. The contract handles rental agreements, collects rental payments, and manages the distribution of rental revenue to the owners. It ensures secure and transparent rental transactions through various validations and permission checks.
