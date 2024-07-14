@@ -1,39 +1,45 @@
-# Use Cases for Rentable NFTs
+# Functions
 
-Rentable NFTs (Non-Fungible Tokens) introduce an innovative way to utilize digital assets by allowing owners to lend out their NFTs for a specified period in exchange for compensation. Here are some use cases for rentable NFTs:
+- **Launch**: Initiate a new crowdfunding campaign with a specified target amount, start time, and end time.
+  - **Returns**: Emits a `Launch` event upon successful campaign creation.
 
-## 1. Gaming
-In-Game Items and Characters: Players can rent rare or powerful in-game items, characters, or skins to gain an advantage in specific scenarios or events without the need to purchase them outright.
+- **Cancel**: Cancel a campaign before it starts.
+  - **Security**: Requires the caller to be the campaign creator.
+  - **Returns**: Emits a `Cancel` event upon successful cancellation.
 
-## 2. Virtual Real Estate
-Metaverse Land Parcels: Users can rent virtual land in metaverse platforms to host events, set up virtual stores, or for other short-term projects.
+- **Pledge**: Contribute tokens to a campaign during its active period.
+  - **Security**: Verifies campaign existence, validity of start and end times.
+  - **Returns**: Emits a `Pledge` event upon successful pledge.
 
-## 3. Art and Collectibles
-Digital Art Exhibitions: Art galleries or individuals can rent digital art pieces for virtual exhibitions or events, offering artists a way to earn from their work multiple times without selling it.
+- **Unpledge**: Withdraw pledged tokens from a campaign before it ends.
+  - **Security**: Ensures the campaign is active and the caller has sufficient pledged amount.
+  - **Returns**: Emits an `Unpledge` event upon successful unpledge.
 
-## 4. Music and Entertainment
-Exclusive Content Access: Fans can rent NFTs that grant access to exclusive content, backstage passes, or virtual meet-and-greets with artists and celebrities.
+- **Claim**: Claim the pledged tokens from a successful campaign after its end.
+  - **Security**: Validates campaign success (reached target), end time passed, and prevents multiple claims.
+  - **Returns**: Emits a `Claim` event upon successful fund claim.
 
-## 5. Fashion
-Virtual Fashion Items: Users can rent virtual clothing or accessories for avatars in virtual worlds or social media platforms, allowing them to change their look for special occasions.
+- **Refund**: Refund pledged tokens from an unsuccessful campaign after its end.
+  - **Security**: Ensures the campaign ended without reaching the target and prevents multiple refunds.
+  - **Returns**: Emits a `Refund` event upon successful refund.
 
-## 6. Real-World Asset Tokenization
-Rental Property Tokens: Tokenized representations of real-world rental properties can be rented out for a specific duration, enabling fractional ownership and rental income distribution among token holders.
+- **getCampaignDetails**: Retrieve details of a specific campaign.
+  - **Returns**: Returns the complete details of the campaign.
 
-## 7. Tickets and Passes
-Event Access: Rentable NFTs can represent tickets to concerts, conferences, or other events, providing temporary access without the need for resale.
+- **getPledgedAmount**: Retrieve the pledged amount by a specific pledger for a campaign.
+  - **Returns**: Returns the amount pledged by the specified address.
 
-## 8. Educational Resources
-Course Access: Educational institutions or content creators can rent out access to digital courses or learning materials, making them available for a limited time.
+### Errors
 
-## 9. Sports
-Fan Engagement: Sports teams can issue rentable NFTs that provide exclusive benefits like VIP seating, access to special events, or even interaction with athletes.
+Various errors are defined to handle exceptions during campaign operations, ensuring secure and reliable execution of functions.
 
-## 10. Software and Tools
-Subscription-Based Software: Software licenses can be issued as NFTs, allowing users to rent access to specific tools or platforms for a set period.
+### Internal Functions
 
-## 11. Intellectual Property
-Licensing: Creators can rent out the rights to use their digital creations, such as music, video, or code, for specific projects or durations.
+Internal functions handle validation checks like campaign start and end times, existence, and ownership, ensuring proper execution flow and access control.
 
-## 12. Marketing and Advertising
-Brand Collaborations: Brands can rent NFTs representing digital advertisements or sponsorship deals within virtual worlds, games, or social media platforms.
+## Implementation Details
+
+- **ERC-20 Token Integration**: Utilizes the ERC-20 interface for managing token transfers and balances.
+- **Campaign Management**: Tracks campaign details including creator, target amount, pledged amount, start time, end time, and fund claim status.
+- **Event Emitters**: Emits events for key operations like campaign launch, cancellation, pledge, unpledge, claim, and refund, providing transparency and auditability.
+
