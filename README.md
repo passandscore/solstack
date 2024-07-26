@@ -74,6 +74,7 @@ yarn run coverage
 The Solidity smart contracts are located in the `src` directory.
 
 ```ml
+├─ AntiBotERC20 — "Prevent frontrunner bots from performing sandwich attacks"
 ├─ BasicERC721 — "Simple ERC721 contract"
 ├─ BasicERC1155 — "Simple ERC1155 contract"
 ├─ CrowdFunding — "Crowdfunding contract"
