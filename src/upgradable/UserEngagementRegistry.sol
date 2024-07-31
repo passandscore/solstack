@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity 0.8.25;
 
 import "@openzeppelin-contracts-upgradeable-5.0.2/access/OwnableUpgradeable.sol";
 import "@openzeppelin-contracts-upgradeable-5.0.2/proxy/utils/Initializable.sol";
@@ -164,7 +164,7 @@ contract UserEngagementRegistry is Initializable, OwnableUpgradeable {
     ) external onlyOwner {
         GameStats storage existingGame = _fetchExistingGame(_gameId);
 
-        _requireGameExists(_gameId);
+        _requireGameExists(existingGame.gameId);
         _requireUniqueGameName(_newGameName);
 
         // Update game name mapping
@@ -263,6 +263,7 @@ contract UserEngagementRegistry is Initializable, OwnableUpgradeable {
      * @param _gameId Game id
      */
     function _requireGameExists(uint256 _gameId) internal pure {
+
         if (_gameId == 0) {
             revert GameDoesNotExist();
         }
