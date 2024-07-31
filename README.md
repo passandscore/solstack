@@ -83,6 +83,7 @@ The Solidity smart contracts are located in the `src` directory.
 ├─ RaffleRegistry — "Manage assets for third party raffles"
 ├─ SoulboundNFT — "Single mint, non-transferable NFT contract"
 upgradable/
+├─ UserEngagementRegistry — "Register games and track user interactions"
 ├─ FreeMintERC721 — "Single free mint per address ERC721 contract"
 
 ```
