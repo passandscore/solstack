@@ -81,6 +81,7 @@ The Solidity smart contracts are located in the `src` directory.
 ├─ FixedERC20 — "Fixed supply ERC20 contract"
 ├─ RentableNFT — "Rent out NFTs for a specified period"
 ├─ RaffleRegistry — "Manage assets for third party raffles"
+├─ StakingCooldownSilo — "Securely store staking tokens during cooldown period"
 ├─ SoulboundNFT — "Single mint, non-transferable NFT contract"
 upgradable/
 ├─ UserEngagementRegistry — "Register games and track user interactions"
