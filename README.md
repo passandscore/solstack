@@ -84,8 +84,9 @@ The Solidity smart contracts are located in the `src` directory.
 ├─ StakingCooldownSilo — "Securely store staking tokens during cooldown period"
 ├─ SoulboundNFT — "Single mint, non-transferable NFT contract"
 upgradable/
-├─ UserEngagementRegistry — "Register games and track user interactions"
 ├─ FreeMintERC721 — "Single free mint per address ERC721 contract"
+├─ MembershipCards — "NFT membership cards contract"
+├─ UserEngagementRegistry — "Register games and track user interactions"
 
 ```
 
