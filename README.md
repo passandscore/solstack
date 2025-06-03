@@ -42,9 +42,9 @@ In the terminal, run the following commands:
 To run specific test suites, use:
 
 ```bash
-forge test --match-path "test/Soulbound.t.sol" --fork-url $<RPC_URL>
+forge test --match-path "test/Soulbound.t.sol" --fork-url $RPC_URL
 or
-forge test --match-path "test/upgradable/ShardsRWA/*.t.sol" --fork-url $<RPC_URL>
+forge test --match-path "test/upgradable/ShardsRWA/*.t.sol" --fork-url $RPC_URL
 ```
 
 ## Coverage
@@ -79,6 +79,7 @@ The Solidity smart contracts are located in the `src` directory.
 ├─ AntiBotERC20 — "Prevent frontrunner bots from performing sandwich attacks"
 ├─ BasicERC721 — "Simple ERC721 contract"
 ├─ BasicERC1155 — "Simple ERC1155 contract"
+├─ Create2Factory — "Deterministic contract deployments"
 ├─ CrowdFunding — "Crowdfunding contract"
 ├─ FixedERC20 — "Fixed supply ERC20 contract"
 ├─ RentableNFT — "Rent out NFTs for a specified period"
