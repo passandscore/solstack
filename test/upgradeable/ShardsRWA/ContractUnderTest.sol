@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {FailedCallReceiver} from "test/mocks/FailedCallReceiver.sol";
-import {ShardsRWA} from "src/upgradable/ShardsRWA/ShardsRWA.sol";
+import {ShardsRWA} from "src/upgradeable/ShardsRWA/ShardsRWA.sol";
 import {MockERC20Token} from "test/mocks/ERC20Mock.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "forge-std/Test.sol";

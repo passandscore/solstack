@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ContractUnderTest} from "./ContractUnderTest.sol";
-import {CustomErrors} from "src/upgradable/ShardsRWA/CustomErrors.sol";
+import {CustomErrors} from "src/upgradeable/ShardsRWA/CustomErrors.sol";
 import {OwnableUpgradeable} from "@openzeppelin-contracts-upgradeable-5.0.2/access/OwnableUpgradeable.sol";
 
 

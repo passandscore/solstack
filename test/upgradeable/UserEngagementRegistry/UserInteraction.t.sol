@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 import {ContractUnderTest} from "./ContractUnderTest.sol";
-import {UserEngagementRegistry} from "../../../src/upgradable/UserEngagementRegistry.sol";
+import {UserEngagementRegistry} from "../../../src/upgradeable/UserEngagementRegistry.sol";
 
 contract UserEngagementRegistry_UserInteraction is ContractUnderTest {
       event UserInteraction(

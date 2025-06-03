@@ -44,7 +44,7 @@ To run specific test suites, use:
 ```bash
 forge test --match-path "test/Soulbound.t.sol" --fork-url $RPC_URL
 or
-forge test --match-path "test/upgradable/ShardsRWA/*.t.sol" --fork-url $RPC_URL
+forge test --match-path "test/upgradeable/ShardsRWA/*.t.sol" --fork-url $RPC_URL
 ```
 
 ## Coverage
@@ -86,8 +86,9 @@ The Solidity smart contracts are located in the `src` directory.
 ├─ RaffleRegistry — "Manage assets for third party raffles"
 ├─ StakingCooldownSilo — "Securely store staking tokens during cooldown period"
 ├─ SoulboundNFT — "Single mint, non-transferable NFT contract"
-upgradable/
+upgradeable/
 ├─ FreeMintERC721 — "Single free mint per address ERC721 contract"
+├─ FreeMintRegistry — "ERC1155 free mint registry contract"
 ├─ MembershipCards — "NFT membership cards contract"
 ├─ UserEngagementRegistry — "Register games and track user interactions"
 ├─ ShardsRWA — "Fractional ownership of NFTs"

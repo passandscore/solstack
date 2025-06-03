@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 
-import {UserEngagementRegistry} from "../../../src/upgradable/UserEngagementRegistry.sol";
+import {UserEngagementRegistry} from "../../../src/upgradeable/UserEngagementRegistry.sol";
 import {Fork} from "../../utils/Fork.sol";
 
 abstract contract ContractUnderTest is Fork {

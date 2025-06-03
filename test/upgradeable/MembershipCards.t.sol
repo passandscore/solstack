@@ -9,7 +9,7 @@ import "@openzeppelin-contracts-5.0.2/utils/Strings.sol";
 import {Merkle} from "murky/src/Merkle.sol";
 import {RevertingRecipient} from "../mocks/RevertingRecipient.sol";
 
-import {MembershipCards} from "../../src/upgradable/MembershipCards.sol";
+import {MembershipCards} from "../../src/upgradeable/MembershipCards.sol";
 import {Fork} from "../utils/Fork.sol";
 
 abstract contract Base is Fork {

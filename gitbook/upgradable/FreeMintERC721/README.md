@@ -1,10 +1,10 @@
 # FreeMintERC721
 
-The `FreeMintERC721` contract manages free NFT minting with URI metadata generation. It supports an upgradable design using an initializer function for deployment.
+The `FreeMintERC721` contract manages free NFT minting with URI metadata generation. It supports an upgradeable design using an initializer function for deployment.
 
 ## Key Features
 
-- **Contract Type**: Upgradable ERC721 contract.
+- **Contract Type**: upgradeable ERC721 contract.
 - **Initializer Function**: Initializes the contract with name, symbol, and asset URI.
 - **Ownership**: Uses `OwnableUpgradeable` for access control.
 - **Minting Control**: Provides functions to pause, resume, and set minting windows.

@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 import {ContractUnderTest} from "./ContractUnderTest.sol";
-import {UserEngagementRegistry} from "../../../src/upgradable/UserEngagementRegistry.sol";
+import {UserEngagementRegistry} from "../../../src/upgradeable/UserEngagementRegistry.sol";
 import "@openzeppelin-contracts-upgradeable-5.0.2/access/OwnableUpgradeable.sol";
 
 contract UserEngagementRegistry_RegisterNewGame is ContractUnderTest {

@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 
 import {ContractUnderTest} from "./ContractUnderTest.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import {CustomErrors} from "src/upgradable/ShardsRWA/CustomErrors.sol";
+import {CustomErrors} from "src/upgradeable/ShardsRWA/CustomErrors.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {Merkle} from "@murky-0.1.0/src/Merkle.sol";
 import "forge-std/console.sol";

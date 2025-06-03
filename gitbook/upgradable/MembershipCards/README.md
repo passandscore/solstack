@@ -1,10 +1,10 @@
 # MembershipCards
 
-The `MembershipCards` contract is an upgradable smart contract that allows users to mint membership cards during pre-sale and public mint phases. It features an initializer function for deployment, making it adaptable to future upgrades.
+The `MembershipCards` contract is an upgradeable smart contract that allows users to mint membership cards during pre-sale and public mint phases. It features an initializer function for deployment, making it adaptable to future upgrades.
 
 ## Key Features
 
-- **Contract Type**: Upgradable contract for minting membership cards.
+- **Contract Type**: upgradeable contract for minting membership cards.
 - **Initializer Function**: Sets the initial parameters and owner of the contract.
 - **Ownership**: Utilizes `OwnableUpgradeable` for access control.
 - **Minting Phases**: Supports pre-sale and public mint phases with respective controls.

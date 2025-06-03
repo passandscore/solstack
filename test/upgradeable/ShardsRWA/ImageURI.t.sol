@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ContractUnderTest} from "./ContractUnderTest.sol";
-import {ShardRandomness} from "src/upgradable/ShardsRWA/ShardRandomness.sol";
+import {ShardRandomness} from "src/upgradeable/ShardsRWA/ShardRandomness.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract ERC721Core_ImageURITest is ContractUnderTest {

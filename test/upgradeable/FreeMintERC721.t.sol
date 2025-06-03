@@ -5,7 +5,7 @@ import "@openzeppelin-contracts-upgradeable-5.0.2/token/ERC721/ERC721Upgradeable
 import "@openzeppelin-contracts-upgradeable-5.0.2/proxy/utils/Initializable.sol";
 import "@openzeppelin-contracts-upgradeable-5.0.2/access/OwnableUpgradeable.sol";
 import {IERC721Errors} from "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
-import {FreeMintERC721} from "../../src/upgradable/FreeMintERC721.sol";
+import {FreeMintERC721} from "../../src/upgradeable/FreeMintERC721.sol";
 import {Base64} from "@openzeppelin-contracts-5.0.2/utils/Base64.sol";
 import {LibString} from "@solmate-6.7.0/utils/LibString.sol";
 import {Fork} from "../utils/Fork.sol";

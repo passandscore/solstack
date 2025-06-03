@@ -1,10 +1,10 @@
 # UserEngagementRegistry
 
-The `UserEngagementRegistry` contract allows game developers to register their games and track user interactions in web3 games. The contract supports an upgradable design using an initializer function for deployment.
+The `UserEngagementRegistry` contract allows game developers to register their games and track user interactions in web3 games. The contract supports an upgradeable design using an initializer function for deployment.
 
 ## Key Features
 
-- **Contract Type**: Upgradable contract for tracking game interactions.
+- **Contract Type**: upgradeable contract for tracking game interactions.
 - **Initializer Function**: Initializes the contract and sets the initial owner.
 - **Ownership**: Uses `OwnableUpgradeable` for access control.
 - **Game Management**: Provides functions to register new games, update game names, and toggle game statuses.
