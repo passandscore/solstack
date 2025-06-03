@@ -24,7 +24,7 @@ In the .env file, provide the following environment variable by replacing <url> 
 
 
 ```bash
-<YOUR_ENV_RPC_VARIABLE_NAME>=<url>
+<RPC_URL>=<url>
 ```
 
 
@@ -34,7 +34,7 @@ In the terminal, run the following commands:
 
 ```bash
  source .env
- forge test --fork-url $<YOUR_ENV_RPC_VARIABLE_NAME>
+ forge test --fork-url $<RPC_URL>
  ```
 
 ## Running a Single Test Suite
@@ -42,7 +42,9 @@ In the terminal, run the following commands:
 To run specific test suites, use:
 
 ```bash
-forge test --match-path "test/Soulbound.t.sol"
+forge test --match-path "test/Soulbound.t.sol" --fork-url $<RPC_URL>
+or
+forge test --match-path "test/upgradable/ShardsRWA/*.t.sol" --fork-url $<RPC_URL>
 ```
 
 ## Coverage
@@ -87,6 +89,7 @@ upgradable/
 ├─ FreeMintERC721 — "Single free mint per address ERC721 contract"
 ├─ MembershipCards — "NFT membership cards contract"
 ├─ UserEngagementRegistry — "Register games and track user interactions"
+├─ ShardsRWA — "Fractional ownership of NFTs"
 
 ```
 
